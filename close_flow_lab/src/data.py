@@ -48,7 +48,7 @@ HALF_DAYS = pd.to_datetime([
 
 # checkpoints (ET, HH:MM) at which we record the price
 MAX_STALE_MIN = 30  # thin LETFs (early TECL/TECS, NVDS) have minutes with no trades
-CHECKPOINTS = ["10:00", "10:30", "12:00", "14:00", "15:00", "15:15", "15:30", "15:45", "15:50", "15:55"]
+CHECKPOINTS = ["10:00", "10:30", "12:00", "14:00", "15:00", "15:01", "15:15", "15:30", "15:31", "15:45", "15:50", "15:51", "15:55"]
 
 
 def _tag() -> str:
@@ -60,9 +60,13 @@ def _hm_to_min(hm: str) -> int:
     return int(h) * 60 + int(m)
 
 
+def _base(sym: str) -> Path:
+    return SRC / "metals" / sym if (SRC / "metals" / sym).is_dir() else SRC / sym
+
+
 def load_bars(sym: str, tf: str = "1m") -> pd.DataFrame:
     """RTH bars 09:30-16:00 (16:00 bar kept for the closing print), ET, holdout dropped."""
-    files = sorted(glob.glob(str(SRC / sym / tf / f"{sym}_{tf}_*_PART*.csv")))
+    files = sorted(glob.glob(str(_base(sym) / tf / f"{sym}_{tf}_*_PART*.csv")))
     if not files:
         raise FileNotFoundError(f"no {tf} bundles for {sym}")
     df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
@@ -84,7 +88,7 @@ def load_bars(sym: str, tf: str = "1m") -> pd.DataFrame:
 
 
 def load_daily(sym: str) -> pd.DataFrame:
-    p = SRC / sym / "1d" / f"{sym.lower()}_1d_full.csv"
+    p = _base(sym) / "1d" / f"{sym.lower()}_1d_full.csv"
     d = pd.read_csv(p, parse_dates=["Date"]).rename(columns=str.lower).set_index("date").sort_index()
     d = d[~d.index.duplicated(keep="last")]
     if not UNLOCKED:

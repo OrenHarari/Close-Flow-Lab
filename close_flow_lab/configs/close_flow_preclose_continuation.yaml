@@ -1,0 +1,79 @@
+# Close-Flow Lab verdict: KILL. This is NOT a validated strategy and must not be deployed.
+# Written in the OPEN-CLOSE-TRADE lab/patterns schema so the result lands in the catalog and is not re-tested blindly.
+id: close_flow_preclose_continuation
+name: Pre-close continuation (prev-close->15:00 move predicts 15:00->15:30), LETF bull/bear
+status: rejected
+family: momentum
+horizon: intraday
+requires_engine: intraday_1m
+kind: standalone
+source:
+  branch: CLOSE_FLOW_LAB (OrenHarari/Close-Flow-Lab)
+  commit: see git log
+  path: close_flow_lab/scripts/phase2_baseline.py
+edge_hypothesis: >-
+  LETF rebalancing (sum AUM*L*(L-1)*r_day) is roughly known by 15:00; issuers' swap dealers and the
+  liquidity providers who will absorb the MOC imbalance pre-hedge in the continuous market, so the
+  day's direction continues 15:00->15:30. Effect is real in IS (vol-scaled NW t: QQQ 3.42, IWM 2.53,
+  XLK 2.92, SOXX 3.15; 20/21 untouched instruments positive) but ~1.5-2 bp/trade gross on the
+  underlying, ~5 bp on the LETF.
+entry:
+  condition: sign(prev_close->15:00 return of the underlying), computed on the 14:59 bar close
+  time_et: '15:01'          # 1-minute latency after the signal
+  instrument: bull LETF if up, bear LETF if down (long-only)
+  sizing: LIN = (1%/sigma60) * clip(|z|, 0, 2), z = move / sigma60(t-1)
+  exclude: [month_end, half_days]
+exit:
+  time_stop:
+    bars: '15:31'           # market order; no MOC needed
+regime_filter: ''
+universe_tested: [QQQ/TQQQ/SQQQ, IWM/TNA/TZA, XLK/TECL/TECS, SOXX/SOXL/SOXS]
+reported_metrics:
+  source: close_flow_lab/FINAL_REPORT.md
+  in_sample: 2016-01-04..2025-07-31
+  best_variant: SOXX-L-LIN
+  net_sharpe_preregistered_costs: 0.28
+  net_sharpe_quote_calibrated_costs: 0.78
+  gross_sharpe: 1.69
+  basket_net_sharpe_quote_calibrated: 0.56
+  deflated_sharpe_prob: 0.013
+  holdout_2025_08_01_onward: NOT evaluated (kept clean)
+failure_modes:
+- costs ~= edge: round trip 3-8 bp on LETFs vs 5 bp gross edge
+- year instability (negative 2016, 2019, 2021, 2024)
+- Gao-Han-Li-Zhou first30->last30 absent 2016-2025; closing auction itself carries no continuation
+requires_bars: [1m, 1d]
+provenance:
+  evidence_tier: B
+---
+# Best lead (post-mortem, IS-selected after 84 trials). Untested out of sample.
+# If pursued: pre-register exactly this, then run it ONCE on the untouched holdout (2025-08-01 ->).
+id: close_flow_preclose_continuation_bigmove
+name: Pre-close continuation on big-move days, LETF basket
+status: untested
+family: momentum
+horizon: intraday
+requires_engine: intraday_1m
+kind: standalone
+source:
+  branch: CLOSE_FLOW_LAB (OrenHarari/Close-Flow-Lab)
+  path: close_flow_lab/scripts/phase2_postmortem3.py
+edge_hypothesis: >-
+  Same mechanism; LETF flow is only large relative to costs when |move| >= 1 sigma60.
+entry:
+  condition: '|prev_close->15:00 / sigma60(t-1)| >= 1.0 and not month_end'
+  time_et: '15:01'
+  instrument: bull LETF if up, bear LETF if down; equal notional per family
+exit:
+  time_stop:
+    bars: '15:31'
+universe_tested: [TQQQ/SQQQ, TNA/TZA, TECL/TECS, SOXL/SOXS]
+reported_metrics:
+  in_sample_net_sharpe_quote_calibrated: 1.07
+  in_sample_pf: 1.43
+  in_sample_maxdd: -0.073
+  years_positive: 7/10
+  deflated_sharpe_prob: 0.08   # NOT significant
+failure_modes:
+- selected post hoc on IS; needs a costs <= ~3 bp/side execution (limit/peg orders) to survive
+requires_bars: [1m, 1d]

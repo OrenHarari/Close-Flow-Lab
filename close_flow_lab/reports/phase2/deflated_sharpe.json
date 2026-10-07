@@ -1,0 +1,19 @@
+{
+ "n_trials": 84,
+ "sr0_ann": 1.4917268640913144,
+ "phase2_best_preregistered(SOXX-L-LIN)": {
+  "ann_sharpe": 0.28051771121006314,
+  "psr_vs_0": 0.8078544019314589,
+  "dsr": 8.614382679312197e-05
+ },
+ "phase2_best_corrected(SOXX-L-LIN)": {
+  "ann_sharpe": 0.779202429213377,
+  "psr_vs_0": 0.9924989242765812,
+  "dsr": 0.013067907134507466
+ },
+ "lead_postmortem(BASKET4-L-EQ-z1,corrected)": {
+  "ann_sharpe": 1.0742787169540897,
+  "psr_vs_0": 0.9998485794644242,
+  "dsr": 0.08017420297548844
+ }
+}
