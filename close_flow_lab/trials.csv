@@ -1,0 +1,1 @@
+trial_id,phase,hypothesis,variant,params_json,is_start,is_end,is_n_trades,is_sharpe,is_pf,is_cagr,is_maxdd,oos_n_trades,oos_sharpe,oos_pf,notes
