@@ -1,0 +1,254 @@
+<title>Close-Flow Lab – דוח מחקר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column (lab notebook), RTL; charts and tables break out to a wider measure. */
+:root{
+  --paper:#f7f8f6; --sheet:#ffffff; --ink:#15212b; --ink-2:#4b5761; --ink-3:#7a858d; --rule:#dfe3e1;
+  --accent:#0f6f73; --kill:#b3261e; --kill-bg:#fbeceb; --ok:#1e7a46; --ok-bg:#e8f4ec;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --pos:42,120,214; --neg:227,73,72;
+  --f-display:"Frank Ruhl Libre","Times New Roman",serif;
+  --f-body:"IBM Plex Sans Hebrew","Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11171c; --sheet:#182128; --ink:#e9eef0; --ink-2:#b4bec4; --ink-3:#86919a; --rule:#2b363e;
+  --accent:#4fb3b0; --kill:#ff8a80; --kill-bg:#3a1e1d; --ok:#6fcf97; --ok-bg:#1b3326;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --pos:57,135,229; --neg:230,103,103; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11171c; --sheet:#182128; --ink:#e9eef0; --ink-2:#b4bec4; --ink-3:#86919a; --rule:#2b363e;
+  --accent:#4fb3b0; --kill:#ff8a80; --kill-bg:#3a1e1d; --ok:#6fcf97; --ok-bg:#1b3326;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --pos:57,135,229; --neg:230,103,103; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7}
+.wrap{direction:rtl;max-width:880px;margin:0 auto;padding-inline:20px;padding-block:40px 64px;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,5vw,2.9rem)}
+h2{font-size:1.6rem;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+h3{font-size:1.15rem;font-family:var(--f-body);font-weight:600}
+p{margin:0;max-width:68ch}
+section{display:flex;flex-direction:column;gap:16px;min-width:0}
+.meta{font-family:var(--f-mono);font-size:.8rem;color:var(--ink-3);letter-spacing:.02em;direction:ltr;text-align:right}
+.lede{font-size:1.12rem;color:var(--ink-2)}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;color:var(--accent);font-weight:600}
+.verdict{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;background:var(--kill-bg);border:1px solid color-mix(in srgb,var(--kill) 35%,transparent);border-radius:10px;padding:20px 22px}
+.stamp{font-family:var(--f-mono);font-weight:500;font-size:1.35rem;color:var(--kill);border:2px solid var(--kill);border-radius:6px;padding:4px 12px;direction:ltr;letter-spacing:.08em}
+.verdict p{color:var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.kpi b{font-family:var(--f-mono);font-size:1.5rem;font-weight:500;direction:ltr;text-align:right}
+.kpi span{font-size:.85rem;color:var(--ink-2);line-height:1.4}
+.figure{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.figure svg{width:100%;height:auto;direction:ltr;display:block}
+.cap{font-size:.88rem;color:var(--ink-2)}
+svg .grid{stroke:var(--rule);stroke-width:1}
+svg .axis{stroke:var(--ink-3);stroke-width:1}
+svg .ref{stroke:var(--ink-2);stroke-width:1;stroke-dasharray:4 4}
+svg .tick{fill:var(--ink-3);font:11px var(--f-mono)}
+svg .val{fill:var(--ink-2);font:10px var(--f-mono)}
+svg rect.s1,.sw.s1{fill:var(--s1);background:var(--s1)} svg rect.s2,.sw.s2{fill:var(--s2);background:var(--s2)}
+svg rect.s3,.sw.s3{fill:var(--s3);background:var(--s3)} svg rect.s4,.sw.s4{fill:var(--s4);background:var(--s4)}
+svg .ln{fill:none;stroke-width:2;stroke-linejoin:round}
+svg .ln.s1{stroke:var(--s1)} svg .ln.s2{stroke:var(--s2)} svg .ln.s3{stroke:var(--s3)} svg .ln.s4{stroke:var(--s4)}
+svg .dot{stroke:var(--sheet);stroke-width:2} svg .dot.s1{fill:var(--s1)} svg .dot.s2{fill:var(--s2)} svg .dot.s3{fill:var(--s3)} svg .dot.s4{fill:var(--s4)}
+svg rect:hover,svg .dot:hover{opacity:.75}
+.legend{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.85rem;color:var(--ink-2)}
+.legend li{display:flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-weight:600;color:var(--ink-2);font-size:.8rem;background:color-mix(in srgb,var(--rule) 35%,var(--sheet))}
+tbody tr:last-child td,tbody tr:last-child th{border-bottom:0}
+.num,td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;direction:ltr;text-align:right;white-space:nowrap}
+.pill{display:inline-block;font-size:.75rem;font-weight:600;padding:1px 9px;border-radius:999px;white-space:nowrap}
+.pill.fail{color:var(--kill);background:var(--kill-bg)} .pill.go{color:var(--ok);background:var(--ok-bg)} .pill.na{color:var(--ink-3);background:color-mix(in srgb,var(--rule) 50%,transparent)}
+td.hi{color:var(--accent);font-weight:500}
+.heat{font-family:var(--f-mono);font-size:.85rem}
+.heat td{text-align:center;direction:ltr;color:var(--ink)}
+.heat td.pos{background:rgba(var(--pos),calc(var(--a)*.55))} .heat td.neg{background:rgba(var(--neg),calc(var(--a)*.55))}
+.heat td.strong{font-weight:500;outline:1.5px solid var(--ink-2);outline-offset:-3px}
+.heat th{white-space:nowrap}
+ul.plain{margin:0;padding-inline-start:20px;display:flex;flex-direction:column;gap:8px;max-width:72ch}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.note{border-inline-start:3px solid var(--accent);padding:4px 14px;color:var(--ink-2);font-size:.95rem}
+code,bdi.code{font-family:var(--f-mono);font-size:.85em}
+footer{font-size:.85rem;color:var(--ink-3)}
+@media (max-width:560px){.verdict{grid-template-columns:1fr}.wrap{padding-block:28px 48px}}
+</style>
+
+<div class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:12px">
+  <div class="eyebrow">דוח מחקר אוטונומי · אסטרטגיות סוף יום</div>
+  <h1><bdi>Close-Flow Lab</bdi>: האם יש יתרון מבני בזרימות של סוף היום?</h1>
+  <p class="lede">חיפשנו יתרון מבני בדקות האחרונות של יום המסחר: איזון מחדש של תעודות סל ממונפות, ומומנטום תוך־יומי. הכול נבדק לפי פרוטוקול שנקבע מראש, עם שערי מעבר קשיחים ועם 12 חודשי נתונים נעולים שנשמרו לבדיקה סופית אחת.</p>
+  <div class="meta">2026-10-07 · branch CLOSE_FLOW_LAB · in-sample 2016-01-04 → 2025-07-31 · holdout 2025-08-01 → (locked)</div>
+</header>
+
+<section aria-labelledby="v">
+  <h2 id="v">השורה התחתונה</h2>
+  <div class="verdict">
+    <div class="stamp">KILL</div>
+    <p><b>לא נמצאה אסטרטגיה שעוברת את כל השערים.</b> האפקט הכי חזק שמצאנו אמיתי סטטיסטית: התנועה מסגירת אתמול ועד 15:00 מנבאת את המשך התנועה בין 15:00 ל־15:30. אבל הוא קטן מדי. אחרי עלויות מסחר, השארפ הנקי הטוב ביותר הוא 0.28 לפי מודל העלויות שנקבע מראש, ו־0.78 לפי עלויות מכוילות לציטוטים. השער דורש מעל 1.0. כל שלושת הפיבוטים נוצלו, ולכן הריצה נעצרה. נתוני ה־holdout לא נפתחו כלל, ונשארו נקיים לבדיקה עתידית אחת.</p>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><b>1.57</b><span>שארפ ברוטו, סל LETF</span></div>
+    <div class="kpi"><b>0.78</b><span>שארפ נקי, הווריאנט הטוב ביותר (עלויות מכוילות)</span></div>
+    <div class="kpi"><b>0 / 30</b><span>וריאנטים שעברו את שער שלב 2</span></div>
+    <div class="kpi"><b>84 / 200</b><span>ניסויים שנרשמו ב־trials.csv</span></div>
+    <div class="kpi"><b>3 / 3</b><span>פיבוטים שנוצלו</span></div>
+  </div>
+</section>
+
+<section aria-labelledby="log">
+  <h2 id="log">יומן ההחלטות</h2>
+  <p>בסוף כל שלב נבדק השער שנקבע מראש, ונרשמה החלטה: להמשיך (GO), לשנות השערה (PIVOT) או לעצור (KILL). כל פיבוט נרשם ב־STATE.md, יחד עם ההסבר המבני שלו, לפני שהורץ.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>שלב</th><th>החלטה</th><th>מה קבע את ההחלטה</th></tr></thead>
+    <tbody>
+      <tr><th>0 · מלאי נתונים</th><td><span class="pill go">GO</span></td><td>8 זוגות של LETF מול נכס בסיס עם נתוני SIP נקיים מ־2016. כל 39 הספליטים והספליטים ההפוכים טופלו. מחיר הסגירה (הפתיחה של נר 16:00) תואם לסגירה הרשמית בפחות מנקודת בסיס אחת.</td></tr>
+      <tr><th>1 · אימות האפקט</th><td><span class="pill fail">PIVOT 1</span></td><td>מומנטום "30 דקות ראשונות → 30 אחרונות" (Gao ואחרים) לא קיים ב־2016–2025. התנועה היומית מנבאת את השעה האחרונה רק ב־SOXX. ב־QQQ וב־XLK יותר ממחצית האפקט מגיעה משנת 2020.</td></tr>
+      <tr><th>פיבוט 1 · ימי תנועה גדולה</th><td><span class="pill fail">PIVOT 2</span></td><td>עובר רק ב־SOXX (t = 2.72). ב־QQQ וב־XLK שנת 2020 מחזיקה 61%–63% מהאפקט.</td></tr>
+      <tr><th>פיבוט 2 · נרמול לתנודתיות</th><td><span class="pill fail">PIVOT 3</span></td><td>שוב עובר רק ב־SOXX (t = 3.21). ב־XLK וב־XBI האפקט לא עקבי משנה לשנה.</td></tr>
+      <tr><th>פיבוט 3 · חלון שלפני פרסום הדיסבלאנס</th><td><span class="pill go">GO</span></td><td>החלון 15:00→15:30 עובר ב־4 נכסי בסיס: QQQ, IWM, XLK, SOXX. כדי לבדוק שזה לא כריית נתונים, הוא הורץ על 21 מכשירים שלא נבדקו קודם: ב־20 מהם הכיוון חיובי.</td></tr>
+      <tr><th>2 · אסטרטגיית בסיס</th><td><span class="pill fail">KILL</span></td><td>אף אחד מ־30 הווריאנטים לא מגיע לשארפ נקי מעל 1.0, באף אחד משלושה מודלי עלויות. לא נשארו פיבוטים.</td></tr>
+      <tr><th>3 · עמידות, FINAL · holdout</th><td><span class="pill na">לא הורץ</span></td><td>הריצה נעצרה לפני כן. נתוני ה־holdout לא נטענו.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section aria-labelledby="eff">
+  <h2 id="eff">האפקט שנמצא</h2>
+  <p>הכיוון של היום עד 15:00 נמשך בחצי השעה שאחריה. ההסבר המבני: עד 15:00 כבר ידוע בערך כמה תעודות הסל הממונפות יצטרכו לקנות או למכור בסגירה (הנכסים × L(L−1) × תשואת היום). הדילרים שמגדרים את ה־swaps, וספקי הנזילות שיספגו את הדיסבלאנס, מתחילים להתגדר כבר בשוק הרציף. אחרי שהדיסבלאנס מתפרסם ב־15:50 המידע הזה כבר ציבורי.</p>
+  <div class="figure">
+    <h3>מובהקות האפקט לפי שנה (t של Newey-West)</h3>
+    {{BARS_LEGEND}}
+    {{BARS}}
+    <p class="cap">האפקט מגיע בעיקר משנים של לחץ ומגמה (2018, 2020, 2022, 2023), וקרוב לאפס ב־2016, 2019, 2021 וב־2024. זה סימן אזהרה.</p>
+  </div>
+  <div class="two">
+    <div class="tbl"><table>
+      <thead><tr><th>חלון</th><th>QQQ</th><th>IWM</th><th>XLK</th><th>SOXX</th></tr></thead>
+      <tbody>
+        <tr><th class="num">15:00→15:30</th><td class="num hi">3.42</td><td class="num hi">2.53</td><td class="num hi">2.92</td><td class="num hi">3.15</td></tr>
+        <tr><th class="num">15:30→15:45</th><td class="num">1.20</td><td class="num">−0.22</td><td class="num">1.01</td><td class="num">−0.08</td></tr>
+        <tr><th class="num">15:45→15:55</th><td class="num">0.77</td><td class="num">0.29</td><td class="num">1.30</td><td class="num hi">2.48</td></tr>
+        <tr><th class="num">15:55→סגירה</th><td class="num">0.12</td><td class="num">0.77</td><td class="num">1.34</td><td class="num">0.69</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note">מכירת הסגירה עצמה (האוקשן) לא מוסיפה המשכיות. לכן אסטרטגיה שיוצאת ב־MOC, כמו שהוגדר במקור, קונה רעש בחצי השעה האחרונה שלה.</div>
+  </div>
+  <h3>בדיקת זיוף: 21 מכשירים שלא נבדקו קודם</h3>
+  <p>הכלל נקבע מראש: האפקט נחשב אמיתי אם לפחות 70% מהשיפועים חיוביים והחציון של t מעל 1. התוצאה: 20 מתוך 21 חיוביים, t חציוני 1.53. מניות השבבים (שנסחרות בסל של SOXL) הכי חזקות. זהב, מכרות זהב ו־IBIT קרובים לאפס, וזה בדיוק מה שהמנגנון מנבא.</p>
+  <div class="tbl" style="max-height:340px;overflow-y:auto"><table>
+    <thead><tr><th>מכשיר</th><th>ימים</th><th>t</th></tr></thead>
+    <tbody>{{FALS}}</tbody>
+  </table></div>
+</section>
+
+<section aria-labelledby="ph2">
+  <h2 id="ph2">למה זה נכשל: עלויות</h2>
+  <p>היתרון הוא בערך 1.5–2 נקודות בסיס לעסקה על נכס הבסיס, ובערך 5 נקודות בסיס על ה־LETF. עסקה הלוך־חזור ב־LETF עולה 3–8 נקודות בסיס, כי המרווחים של SOXS, TECS ו־SQQQ רחבים. כמעט כל היתרון הולך על עלויות.</p>
+  <div class="figure">
+    <h3>עקומות הון בתוך המדגם (סל של 4 משפחות, LETF)</h3>
+    {{EQUITY_LEGEND}}
+    {{EQUITY}}
+    <p class="cap">ציר לוגריתמי, צמיחה של 1$. אין קטע מחוץ למדגם ואין holdout, כי הריצה נעצרה בשלב 2. הקו הצהוב נבחר בדיעבד, ומוצג רק כליד.</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>וריאנט</th><th>שארפ ברוטו</th><th>נטו, עלויות רשומות</th><th>נטו, עלויות מכוילות</th><th>Profit factor (מכויל)</th></tr></thead>
+    <tbody>
+      <tr><th>סל LETF, משקל שווה</th><td class="num">1.60</td><td class="num">−0.46</td><td class="num">0.24</td><td class="num">1.05</td></tr>
+      <tr><th>סל LETF, גודל לפי עוצמת האות</th><td class="num">1.57</td><td class="num">0.04</td><td class="num">0.56</td><td class="num">1.16</td></tr>
+      <tr><th>סל נכסי בסיס, לפי עוצמת האות</th><td class="num">1.46</td><td class="num">−0.15</td><td class="num">0.33</td><td class="num">1.09</td></tr>
+      <tr><th>QQQ בלבד, לפי עוצמת האות</th><td class="num">1.42</td><td class="num">0.28</td><td class="num">0.57</td><td class="num">1.16</td></tr>
+      <tr><th>SOXX דרך LETF, לפי עוצמת האות</th><td class="num">1.69</td><td class="num">0.28</td><td class="num hi">0.78</td><td class="num">1.22</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cap">השער: שארפ נקי מעל 1.0, profit factor מעל 1.3, וניצחון על בסיס אקראי ב־p &lt; 0.05. כל הווריאנטים מנצחים כיוון אקראי (p &lt; 0.001), ואף אחד לא עובר את שני התנאים הראשונים. גם עם חצי מרווח בלבד ובלי החלקה בכלל, הטוב ביותר מגיע ל־0.99.</p>
+  <div class="note">טעות שמצאתי ותיקנתי: את כיול המרווחים מול ציטוטי NBBO קראתי הפוך, ולכן עלויות ה־LETF נופחו בערך פי 1.8. אחרי התיקון הורצו מחדש כל 30 הווריאנטים, והמסקנה לא השתנתה.</div>
+</section>
+
+<section aria-labelledby="where">
+  <h2 id="where">איפה כן נשאר יתרון</h2>
+  <div class="figure">
+    <h3>שארפ נקי לפי סף תנועה ועלות לצד (סל LETF, משקל שווה)</h3>
+    <div class="tbl">{{HEAT}}</div>
+    <p class="cap">z = התנועה עד 15:00 חלקי סטיית התקן של 60 הימים הקודמים. בתאים המסומנים השארפ מעל 1. המשטח חלק, בלי שיא בודד: היתרון נשאר רק כשמסננים לימים של תנועה של סיגמא ומעלה, וכשעלות הביצוע לצד היא עד 2–3 נקודות בסיס.</p>
+  </div>
+  <div class="figure">
+    <h3>לפי משטר תנודתיות (תנודתיות ממומשת 20 יום של QQQ, במקום VIX)</h3>
+    {{REGIME_LEGEND}}
+    {{REGIME}}
+    <p class="cap">היתרון חי בעיקר בתקופות של תנודתיות גבוהה. זה עקבי עם המנגנון: הזרימה של ה־LETF גדלה ביחד עם התנועה.</p>
+  </div>
+</section>
+
+<section aria-labelledby="stats">
+  <h2 id="stats">ניסויים, Deflated Sharpe ופרקליט השטן</h2>
+  <div class="kpis">
+    <div class="kpi"><b>1.49</b><span>שארפ מקסימלי צפוי במקרה, עם 84 ניסויים</span></div>
+    <div class="kpi"><b>0.0001</b><span>DSR, הווריאנט הטוב לפי העלויות הרשומות</span></div>
+    <div class="kpi"><b>0.013</b><span>DSR, אותו וריאנט עם עלויות מכוילות</span></div>
+    <div class="kpi"><b>0.08</b><span>DSR, הליד של ימי תנועה גדולה (לא מובהק)</span></div>
+  </div>
+  <ul class="plain">
+    <li><b>"מחיר הסגירה מזויף."</b> נבדק: הפתיחה של נר 16:00 תואמת לסגירה הרשמית של SIP בפחות מנקודת בסיס. נדחה.</li>
+    <li><b>"האפקט הוא רק 2020."</b> נכון לגבי האפקט המקורי (2020 מחזיקה 52%–57%), ולכן השער דחה אותו.</li>
+    <li><b>"חלון 15:00–15:30 נבחר אחרי שהסתכלתי."</b> נכון, ולכן הוא נבדק על 21 מכשירים חדשים. 20 חיוביים, ולכן הטענה נדחית. ה־t בתוך המדגם עדיין מוטה כלפי מעלה.</li>
+    <li><b>"ה־KILL מזויף, כי העלויות מנופחות."</b> נכון בחלקו: נמצאה טעות כיול, והיא תוקנה. גם אחריה, וגם עם חצי מרווח בלבד, אין וריאנט מעל 1.0.</li>
+    <li><b>"עם סינון של תנועה גדולה זה עובר."</b> זה סינון של שלב 3 שנבחר בדיעבד, וה־DSR שלו 0.08. נרשם כליד בלבד.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="oct">
+  <h2 id="oct">מתאם עם OPEN-CLOSE-TRADE</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>סדרה של Close-Flow</th><th>Apex Reserve</th><th>Barometer (מ־2022)</th></tr></thead>
+    <tbody>
+      <tr><th>SOXX דרך LETF, לפי עוצמת האות</th><td class="num">0.085</td><td class="num">0.033</td></tr>
+      <tr><th>סל LETF, לפי עוצמת האות</th><td class="num">0.078</td><td class="num">0.051</td></tr>
+      <tr><th>סל LETF, ימי תנועה גדולה</th><td class="num">0.106</td><td class="num">0.047</td></tr>
+    </tbody>
+  </table></div>
+  <p>המתאם עם הבוטים החיים קרוב לאפס. אילו היה כאן יתרון נקי, הוא היה מגוון יפה את תיק הפתיחה.</p>
+</section>
+
+<section aria-labelledby="rec">
+  <h2 id="rec">המלצה</h2>
+  <ul class="plain">
+    <li><b>לא לעבור ל־paper או ל־live</b> עם האסטרטגיה שנפסלה. היא נרשמה בקטלוג עם סטטוס <bdi class="code">rejected</bdi>.</li>
+    <li><b>לא לחזור על:</b> מומנטום "30 ראשונות → 30 אחרונות", המשכיות עם יציאה ב־MOC, גרסה על נכס הבסיס בלבד, וסלי LETF בלי סינון.</li>
+    <li><b>הליד היחיד ששווה בדיקה נקייה אחת:</b> המשכיות לפני הסגירה רק בימי תנועה גדולה (|z| ≥ 1), דרך ה־LETF, כניסה ב־15:01 ויציאה ב־15:31, בלי סוף חודש. בתוך המדגם ועם עלויות מכוילות: שארפ 1.07, PF 1.43, דרואדאון מקסימלי 7%−, 7 מתוך 10 שנים חיוביות.</li>
+    <li><b>איך לבדוק אותו:</b> לרשום מראש את המפרט בדיוק כמו שהוא, ולהריץ אותו פעם אחת על ה־holdout הנעול (מ־2025-08-01). רק אם השארפ שם מעל 0.7, לעבור ל־paper.</li>
+    <li><b>תנאי ביצוע:</b> עלות של עד 2–3 נקודות בסיס לצד, כלומר פקודות לימיט או פג־לאמצע, ועדיף רק הרגליים הנזילות (TQQQ, SOXL, TECL, TNA).</li>
+    <li><b>גודל פוזיציה ל־paper:</b> עד 10% מההון לכל משפחה ב־LETF (חשיפה של כ־30% לנכס הבסיס), עם עצירת הפסד יומית של 1.5% לשרוול. בממוצע עסקה אחת לכל משפחה בכל 4 ימים.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="costs">
+  <h2 id="costs">הנחות עלות ונתונים</h2>
+  <div class="two">
+    <div class="tbl"><table>
+      <thead><tr><th>סימול</th><th>עלות לצד (bp, רשומה מראש)</th></tr></thead>
+      <tbody>
+        <tr><td><bdi>QQQ / IWM</bdi></td><td class="num">1.0 / 1.0</td></tr>
+        <tr><td><bdi>XLK / SOXX</bdi></td><td class="num">1.5 / 1.7</td></tr>
+        <tr><td><bdi>TQQQ / TECL / TNA</bdi></td><td class="num">2.1 / 2.4 / 2.6</td></tr>
+        <tr><td><bdi>SOXL / TZA / SQQQ</bdi></td><td class="num">3.6 / 4.5 / 4.9</td></tr>
+        <tr><td><bdi>TECS / SOXS</bdi></td><td class="num">5.9 / 6.6</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="plain">
+      <li>המרווח נאמד מנרות דקה במודל Abdi-Ranaldo, עם רצפה של סנט אחד, וכויל מול ציטוטי NBBO של SIP.</li>
+      <li>כניסה בסגירה של נר 15:00 (דקת השהיה אחרי האות), יציאה בסגירה של נר 15:30. פקודות מרקט, בלי MOC.</li>
+      <li>הורדת נתונים חסומה בסביבה הזאת (<bdi class="code">data.alpaca.markets</bdi>), ואין מפתחות Alpaca. לכן חסרים SPY, UPRO, SPXU, VIX ו־VIX3M, והנתונים נגמרים באוגוסט–ספטמבר 2026.</li>
+      <li>במקום VIX נעשה שימוש בתנודתיות ממומשת של QQQ.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>כל הקבצים נמצאים ב־<bdi class="code">close_flow_lab/</bdi> בענף <bdi class="code">CLOSE_FLOW_LAB</bdi>: <bdi class="code">FINAL_REPORT.md</bdi>, <bdi class="code">STATE.md</bdi>, <bdi class="code">trials.csv</bdi>, <bdi class="code">configs/</bdi>, <bdi class="code">reports/</bdi>.</footer>
+</div>
